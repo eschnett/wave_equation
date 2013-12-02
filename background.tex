@@ -37,7 +37,9 @@ where $u$ is a scalar field defined on $x\in\Omega$ (where $\Omega$ is
 some one-dimensional domain) and evolving in time for all $t\in\tau$
 (where $\tau$ is an interval in $\R$). $c\in\R$ is a constant. In the
 initial-boundary formulation (the problem I solve here), we specify
-$u(0,x)$ and $u(t,\partial\Omega)$, where $\partial\Omega$ is the
+$u(0,x)$
+[ES] and $\partial_t u(0,x)$
+and $u(t,\partial\Omega)$, where $\partial\Omega$ is the
 boundary of the domain.
 
 This is the problem I will solve. For simplicity, we will assume that
@@ -54,6 +56,7 @@ Then the initial and boundary conditions are
   u(t,0) &=& \alpha,\text{ where }\alpha\in\R\\
   \text{and }u(t,L)&=&\beta\text{ where }\alpha\in\R.
 \end{eqnarray}
+ES: Also: $\partial_t u(0,x)$.
 
 \section{Coordinates}
 
@@ -84,6 +87,7 @@ conditions somewhat. Now,
   r(0,x) &=& f'(x)\\
   s(t,0) &=& s(t,L) = 0.
 \end{eqnarray}
+ES: Also: $s(0,x)$.
 And now $\alpha$ and $\beta$ are constants of integration when we
 retrieve $u$ by integrating $s$.
 

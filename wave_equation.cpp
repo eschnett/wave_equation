@@ -67,6 +67,11 @@ int get_linear_index_of_type(int type, int i, const dVector& v) {
 
 
 // ----------------------------------------------------------------------
+// ES: the distinction between S, R, and U can be made via member
+// pointers, reducing the need for multiple functions.
+// Alternatively, you can use an enum to denote the individual fields,
+// and then use the enum as offset.
+// Alternatively, you can use a different array for each field.
 int get_linear_index_s(int i, const dVector& v) {
   return get_linear_index_of_type(S,i,v);
 }
@@ -189,13 +194,21 @@ dVector f(double t, const dVector& y, const dVector& optional_args) {
   // Fill the output array
   for (int i = 0; i < num_points; i++) {
     // Fill the (du/dt) terms with s.
+
+    // ES: A nicer notation would allow you to write e.g.
+    // "output[i].*s" or "output.*s[i]" (see "member pointers), or
+    // "output[i][s]", or maybe even "s[i]" where "s" is a local
+    // variable defined before the loop.
     output[get_linear_index_u(i,output)] = get_ith_s(i,y);
     // Fill the (dr/dt) vectors with (ds/dx).
+    // ES: A nicer notation would allow you to write e.g.
+    // "diff(h,y,i,s)" or "diff(h,y,s,i)" instead.
     output[get_linear_index_r(i,output)] = derivative_for_s(i,y,h);
     // Fill the (ds/dt) vectors with c^2(dr/dx).
     output[get_linear_index_s(i,output)] = c2 * derivative_for_r(i,y,h);
   }
   // (du/dt) at the boundary is forced to be zero. Impose this.
+  // ES: What about the boundary conditions for the other fields?
   output[get_linear_index_s(0,output)] = 0;
   output[get_linear_index_s(num_points-1,output)] = 0;
 
@@ -236,6 +249,10 @@ dVector initial_standing_wave(double amplitude, double wave_number,
     initial_data[get_linear_index_r(i,initial_data)] = r;
     initial_data[get_linear_index_s(i,initial_data)] = s;
   }
+  // ES: Did you think about how to set up a Gaussian-shaped wave
+  // packet that moves to the right? You don't need to implement it,
+  // but thinking about how to find the initial condition for this is
+  // insightful.
  
   // Return the generated standing wave.
   return initial_data;  
@@ -346,15 +363,19 @@ double inner_product(int type_1, int type_2, const dVector& grid,
       * get_ith_element_of_type(type_2,i,grid);
     if ( i == 0 || i == num_points - 1 ) { // metric has 1/2s here
       output += 0.5 * lattice_spacing * product;
-  }
+    }
     else { // metric is the identity here.
       output += lattice_spacing * product;
     }
+    // ES: I would have introduced a local variable w that is either
+    // 1/2 or 1, and then written "output += w * h * product", so that
+    // the statement "output += ..." exists only once.
   }
   return output;
 }
 
 double energy(const dVector& grid, double lattice_spacing) {
+  // ES: You could introduce an overall factor of 1/2 here.
   return inner_product(0,0,grid,lattice_spacing)
     + inner_product(1,1,grid,lattice_spacing);
 }

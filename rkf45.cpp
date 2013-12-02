@@ -201,6 +201,14 @@ RKF45::RKF45(const RKF45 &integrator) {
   }
 }
 
+// ES: There are many constructors that look very similar to each
+// other, and just differ in their arguments. Instead, you can define
+// a new class "integrator options", and define a default initializer
+// for this class that sets good default values. Additional setter
+// methods allow the user to modify the integrator options. The RKF45
+// constructor then takes such an integrator option argument, maybe
+// defaulting to NULL which would use the default integrator options.
+
 // Assignment operator. Copies one object into another like the copy
 // constructor. Useful for the shooting method. Only copies initial
 // data. Integration data is not copied.
